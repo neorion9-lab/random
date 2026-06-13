@@ -16,10 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const numPicksInput = document.getElementById('num-picks');
   const secretSequenceInput = document.getElementById('secret-sequence');
 
+  // Student Name Inputs
+  const newStudentNumInput = document.getElementById('new-student-num');
+  const newStudentNameInput = document.getElementById('new-student-name');
+  const addStudentBtn = document.getElementById('add-student-btn');
+  const studentListEl = document.getElementById('student-list');
+
   // State
   let totalStudents = 20;
   let numPicks = 3;
   let secretSequence = [];
+  let studentMap = {}; // { "1": "홍길동", "2": "김철수" }
   let isSpinning = false;
   let balls = [];
   let shakeInterval = null;
@@ -38,7 +45,53 @@ document.addEventListener('DOMContentLoaded', () => {
     totalStudentsInput.value = totalStudents;
     numPicksInput.value = numPicks;
     secretSequenceInput.value = secretSequence.join(',');
+    renderStudentList();
   }
+
+  function renderStudentList() {
+    studentListEl.innerHTML = '';
+    const entries = Object.entries(studentMap).sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+    
+    if (entries.length === 0) {
+      studentListEl.innerHTML = '<li style="color: #888; font-size: 0.9rem; justify-content: center;">등록된 학생 이름이 없습니다.</li>';
+      return;
+    }
+
+    entries.forEach(([num, name]) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${num}번 - ${name}</span> <button class="remove-student-btn" data-num="${num}">&times;</button>`;
+      studentListEl.appendChild(li);
+    });
+
+    // Add remove listeners
+    document.querySelectorAll('.remove-student-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const numToRemove = e.target.getAttribute('data-num');
+        delete studentMap[numToRemove];
+        renderStudentList();
+      });
+    });
+  }
+
+  addStudentBtn.addEventListener('click', () => {
+    const num = parseInt(newStudentNumInput.value, 10);
+    const name = newStudentNameInput.value.trim();
+
+    if (isNaN(num) || num < 1) {
+      alert('올바른 학생 번호를 입력해주세요.');
+      return;
+    }
+    if (!name) {
+      alert('학생 이름을 입력해주세요.');
+      return;
+    }
+
+    studentMap[num] = name;
+    newStudentNumInput.value = '';
+    newStudentNameInput.value = '';
+    newStudentNumInput.focus();
+    renderStudentList();
+  });
 
   function closeModal() {
     secretModal.classList.add('hidden');
@@ -93,7 +146,16 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 1; i <= totalStudents; i++) {
       const ball = document.createElement('div');
       ball.className = 'ball';
-      ball.textContent = i;
+      
+      const displayName = studentMap[i];
+      if (displayName) {
+        ball.textContent = displayName;
+        ball.style.fontSize = displayName.length > 3 ? '0.7rem' : '0.9rem';
+      } else {
+        ball.textContent = i;
+      }
+      
+      ball.dataset.number = i; // Save number for drawing logic
       ball.style.backgroundColor = colors[(i - 1) % colors.length];
       
       // Random position inside the circle
@@ -116,8 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getWinners() {
     if (secretSequence && secretSequence.length === numPicks) {
-      // Clear sequence after using it once? Let's keep it for now, or maybe clear it so it's a one-time thing.
-      // Usually teachers want it to happen once. Let's not clear it so they can test, but maybe they should clear it themselves.
       return [...secretSequence]; 
     }
 
@@ -154,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       await new Promise(resolve => setTimeout(resolve, 1200)); 
       
-      const targetBall = balls.find(b => b.textContent == targetNumber);
+      const targetBall = balls.find(b => b.dataset.number == targetNumber);
       if (targetBall) {
         balls = balls.filter(b => b !== targetBall);
         ballTray.appendChild(targetBall);

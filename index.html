@@ -12,7 +12,7 @@
     <header style="position: relative;">
       <h1 id="app-title">🎰 두근두근 발표뽑기! 🎰</h1>
       <button id="settings-btn" class="settings-btn" title="설정">⚙️</button>
-      <p class="subtitle">오늘의 개원초 주인공은 누구일까요?</p>
+      <p class="subtitle">오늘의 주인공은 누구일까요?</p>
     </header>
 
     <main>
@@ -44,6 +44,18 @@
           <div class="form-group">
             <label for="total-students">총 학생 수 (최대 번호):</label>
             <input type="number" id="total-students" value="20" min="1" max="100">
+            <small>※ 아래에 학생 이름 정보를 추가하면, 뽑기 공에 번호 대신 이름이 표시됩니다.</small>
+          </div>
+          <div class="form-group">
+            <label>학생 번호 및 이름 추가:</label>
+            <div class="add-student-container">
+              <input type="number" id="new-student-num" placeholder="번호" min="1">
+              <input type="text" id="new-student-name" placeholder="이름">
+              <button id="add-student-btn" type="button" class="add-btn">추가</button>
+            </div>
+            <ul id="student-list" class="student-list">
+              <!-- Students will be added here -->
+            </ul>
           </div>
           <div class="form-group">
             <label for="num-picks">뽑을 인원 수:</label>
