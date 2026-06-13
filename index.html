@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>발표뽑기</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header style="position: relative;">
+      <h1 id="app-title">🎰 두근두근 발표뽑기! 🎰</h1>
+      <button id="settings-btn" class="settings-btn" title="설정">⚙️</button>
+      <p class="subtitle">오늘의 주인공은 누구일까요?</p>
+    </header>
+
+    <main>
+      <div id="lottery-machine" class="lottery-machine">
+        <div id="glass-globe" class="glass-globe">
+          <!-- 공들이 동적으로 추가됨 -->
+        </div>
+        <div class="machine-base">
+          <div class="pipe"></div>
+          <div id="ball-tray" class="ball-tray">
+            <!-- 뽑힌 공들이 동적으로 추가됨 -->
+          </div>
+        </div>
+      </div>
+      
+      <div class="controls">
+        <button id="start-btn" class="start-btn">뽑기 시작!</button>
+      </div>
+    </main>
+
+    <!-- 비밀 모달창 (선생님 전용 설정창) -->
+    <div id="secret-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>선생님 설정 모드 🤫</h2>
+          <button id="close-modal-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="total-students">총 학생 수 (최대 번호):</label>
+            <input type="number" id="total-students" value="20" min="1" max="100">
+          </div>
+          <div class="form-group">
+            <label for="num-picks">뽑을 인원 수:</label>
+            <select id="num-picks">
+              <option value="1">1명</option>
+              <option value="2">2명</option>
+              <option value="3" selected>3명</option>
+              <option value="4">4명</option>
+              <option value="5">5명</option>
+              <option value="6">6명</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="secret-sequence">비밀 순서 (쉼표로 구분, 예: 5,12,7):</label>
+            <input type="text" id="secret-sequence" placeholder="입력하지 않으면 완전 랜덤">
+            <small>※ 입력한 인원 수와 쉼표 개수가 일치하게 적어주세요. 입력하지 않으면 랜덤으로 뽑힙니다.</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="save-settings-btn" class="save-btn">저장 및 닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
