@@ -27,6 +27,23 @@
           </div>
         </div>
       </div>
+      <div class="pick-count-section">
+        <p>한 번에 뽑을 학생 수를 선택하세요.</p>
+        <div class="pick-count-buttons" id="pick-count-buttons">
+          <button class="pick-btn" data-val="1">1</button>
+          <button class="pick-btn" data-val="2">2</button>
+          <button class="pick-btn active" data-val="3">3</button>
+          <button class="pick-btn" data-val="4">4</button>
+          <button class="pick-btn" data-val="5">5</button>
+          <button class="pick-btn" data-val="6">6</button>
+          <button class="pick-btn" data-val="7">7</button>
+          <button class="pick-btn" data-val="8">8</button>
+          <button class="pick-btn" data-val="9">9</button>
+          <button class="pick-btn" data-val="10">10</button>
+          <button class="pick-btn" data-val="11">11</button>
+          <button class="pick-btn" data-val="12">12</button>
+        </div>
+      </div>
       
       <div class="controls">
         <button id="start-btn" class="start-btn">뽑기 시작!</button>
@@ -58,17 +75,6 @@
             </ul>
           </div>
           <div class="form-group">
-            <label for="num-picks">뽑을 인원 수:</label>
-            <select id="num-picks">
-              <option value="1">1명</option>
-              <option value="2">2명</option>
-              <option value="3" selected>3명</option>
-              <option value="4">4명</option>
-              <option value="5">5명</option>
-              <option value="6">6명</option>
-            </select>
-          </div>
-          <div class="form-group">
             <label for="secret-sequence">비밀 순서 (쉼표로 구분, 예: 5,12,7):</label>
             <input type="text" id="secret-sequence" placeholder="입력하지 않으면 완전 랜덤">
             <small>※ 입력한 인원 수와 쉼표 개수가 일치하게 적어주세요. 입력하지 않으면 랜덤으로 뽑힙니다.</small>
@@ -81,6 +87,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

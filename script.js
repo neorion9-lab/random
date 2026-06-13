@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Inputs
   const totalStudentsInput = document.getElementById('total-students');
-  const numPicksInput = document.getElementById('num-picks');
   const secretSequenceInput = document.getElementById('secret-sequence');
 
   // Student Name Inputs
@@ -31,6 +30,102 @@ document.addEventListener('DOMContentLoaded', () => {
   let balls = [];
   let shakeInterval = null;
 
+  // Helpers
+  function numberToKorean(str) {
+    const num = parseInt(str, 10);
+    if (isNaN(num)) return str; // return original if it's a name
+    
+    const units = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+    const tens = ["", "십", "이십", "삼십", "사십", "오십", "육십", "칠십", "팔십", "구십"];
+    if (num === 100) return "백";
+    
+    const t = Math.floor(num / 10);
+    const u = num % 10;
+    return (t === 1 ? "십" : tens[t]) + units[u];
+  }
+
+  function speak(text, rate = 0.8, pitch = 1.0) {
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech to avoid overlapping
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ko-KR';
+      utterance.rate = rate; // Slower for clear pronunciation
+      utterance.pitch = pitch;
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  function playTensionBGM(durationMs) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const duration = durationMs / 1000;
+    
+    const osc = ctx.createOscillator();
+    const filter = ctx.createBiquadFilter();
+    const gain = ctx.createGain();
+    
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(50, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + duration);
+    
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(200, ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(2000, ctx.currentTime + duration);
+    
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.4, ctx.currentTime + duration - 0.1);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+    
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  }
+
+  function playFanfare() {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    
+    const playTone = (freq, startTime, duration, type='triangle') => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
+      
+      gain.gain.setValueAtTime(0, ctx.currentTime + startTime);
+      gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + startTime + 0.05);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + startTime + duration);
+      
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.start(ctx.currentTime + startTime);
+      osc.stop(ctx.currentTime + startTime + duration);
+    };
+    
+    // C4, E4, G4, C5 fanfare
+    playTone(261.63, 0, 0.15, 'square'); 
+    playTone(329.63, 0.15, 0.15, 'square');
+    playTone(392.00, 0.3, 0.15, 'square');
+    playTone(523.25, 0.45, 0.6, 'square');
+    
+    // Visual fanfare
+    if (typeof confetti === 'function') {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
+  }
+
   // Initialize balls on load
   initBalls();
 
@@ -43,7 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
     secretModal.classList.remove('hidden');
     // Load current state into inputs
     totalStudentsInput.value = totalStudents;
-    numPicksInput.value = numPicks;
     secretSequenceInput.value = secretSequence.join(',');
     renderStudentList();
   }
@@ -99,21 +193,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   closeModalBtn.addEventListener('click', closeModal);
 
+  // 1.5 Pick Count Buttons Logic
+  const pickBtns = document.querySelectorAll('.pick-btn');
+  pickBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      pickBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      numPicks = parseInt(btn.dataset.val, 10);
+    });
+  });
+
   saveSettingsBtn.addEventListener('click', () => {
     const newTotal = parseInt(totalStudentsInput.value, 10);
-    const newPicks = parseInt(numPicksInput.value, 10);
     
     if (isNaN(newTotal) || newTotal < 1) {
       alert("총 학생 수를 올바르게 입력해주세요.");
       return;
     }
-    if (isNaN(newPicks) || newPicks < 1 || newPicks > newTotal) {
-      alert("뽑을 인원 수를 올바르게 입력해주세요 (총 학생 수보다 작거나 같아야 합니다).");
-      return;
+    
+    // Check if current numPicks is valid against new total
+    if (numPicks > newTotal) {
+      alert("현재 선택된 뽑을 인원 수가 총 학생 수보다 많습니다. 다시 선택해주세요.");
+      // Optional: auto-adjust numPicks
+      // numPicks = newTotal;
+      // pickBtns.forEach(b => {
+      //   if (parseInt(b.dataset.val, 10) === numPicks) b.classList.add('active');
+      //   else b.classList.remove('active');
+      // });
     }
 
     totalStudents = newTotal;
-    numPicks = newPicks;
 
     const seqStr = secretSequenceInput.value.trim();
     if (seqStr) {
@@ -193,6 +302,8 @@ document.addEventListener('DOMContentLoaded', () => {
     isSpinning = true;
     startBtn.disabled = true;
 
+    speak("두근두근! 뽑기 시작!");
+
     initBalls(); // Reset for new draw
     const winners = getWinners();
 
@@ -208,6 +319,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }, 150);
 
+    // Tension BGM for 5 seconds
+    playTensionBGM(5000);
+    
+    // Wait 5 seconds before drawing
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
     // Animate drawing balls
     for (let i = 0; i < winners.length; i++) {
       const targetNumber = winners[i];
@@ -218,11 +335,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (targetBall) {
         balls = balls.filter(b => b !== targetBall);
         ballTray.appendChild(targetBall);
+        const spokenName = numberToKorean(targetBall.textContent);
+        speak(spokenName + "번!"); // Read the text (number or name)
       }
     }
 
     clearInterval(shakeInterval);
     isSpinning = false;
     startBtn.disabled = false;
+    
+    // Give a small delay before fanfare so the last name is spoken
+    setTimeout(() => {
+      playFanfare();
+      speak("우와아아~ 추카합니다~!", 0.5, 1.8); // Slower and higher pitch for Shin-chan style
+    }, 1000);
   });
 });

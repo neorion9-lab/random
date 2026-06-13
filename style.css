@@ -132,8 +132,59 @@ header h1 {
   100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
+.pick-count-section {
+  background-color: #EEEEEE;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin: 0 auto 20px auto;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.pick-count-section p {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.pick-count-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pick-btn {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  background-color: white;
+  color: #888;
+  font-size: 1.1rem;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+}
+
+.pick-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.pick-btn.active {
+  background-color: black;
+  color: white;
+  transform: scale(1.1);
+}
+
 .controls {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .start-btn {
