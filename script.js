@@ -347,7 +347,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Give a small delay before fanfare so the last name is spoken
     setTimeout(() => {
       playFanfare();
-      speak("우와아아~ 추카합니다~!", 0.5, 1.8); // Slower and higher pitch for Shin-chan style
+      // Wait for fanfare to finish before speaking "축하합니다!"
+      setTimeout(() => {
+        speak("축하합니다!");
+      }, 1200);
     }, 1000);
   });
 });
