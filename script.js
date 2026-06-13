@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // DOM Elements
   const appTitle = document.getElementById('app-title');
   const settingsBtn = document.getElementById('settings-btn');
-  const slotContainer = document.getElementById('slot-container');
+  const glassGlobe = document.getElementById('glass-globe');
+  const ballTray = document.getElementById('ball-tray');
   const startBtn = document.getElementById('start-btn');
   
   // Modal Elements
@@ -20,9 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let numPicks = 3;
   let secretSequence = [];
   let isSpinning = false;
+  let balls = [];
+  let shakeInterval = null;
 
-  // Initialize slots on load
-  initSlots();
+  // Initialize balls on load
+  initBalls();
 
   // 1. Settings Modal Logic
   settingsBtn.addEventListener('click', () => {
@@ -76,18 +79,34 @@ document.addEventListener('DOMContentLoaded', () => {
       secretSequence = [];
     }
 
-    initSlots();
+    initBalls();
     closeModal();
   });
 
-  // 2. Slot Machine Logic
-  function initSlots() {
-    slotContainer.innerHTML = '';
-    for (let i = 0; i < numPicks; i++) {
-      const slot = document.createElement('div');
-      slot.className = 'slot';
-      slot.innerHTML = `<span class="slot-number">?</span>`;
-      slotContainer.appendChild(slot);
+  // 2. Lottery Machine Logic
+  function initBalls() {
+    glassGlobe.innerHTML = '';
+    ballTray.innerHTML = '';
+    balls = [];
+    const colors = ['#FF1493', '#FF9500', '#FFD60A', '#34C759', '#32ADE6', '#007AFF', '#AF52DE', '#FF2D55'];
+
+    for (let i = 1; i <= totalStudents; i++) {
+      const ball = document.createElement('div');
+      ball.className = 'ball';
+      ball.textContent = i;
+      ball.style.backgroundColor = colors[(i - 1) % colors.length];
+      
+      // Random position inside the circle
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.random() * 110; 
+      const centerX = 150 - 22.5; 
+      const centerY = 150 - 22.5;
+      
+      ball.style.left = `${centerX + Math.cos(angle) * radius}px`;
+      ball.style.top = `${centerY + Math.sin(angle) * radius}px`;
+      
+      glassGlobe.appendChild(ball);
+      balls.push(ball);
     }
   }
 
@@ -114,38 +133,35 @@ document.addEventListener('DOMContentLoaded', () => {
     isSpinning = true;
     startBtn.disabled = true;
 
-    const slots = document.querySelectorAll('.slot');
+    initBalls(); // Reset for new draw
     const winners = getWinners();
 
-    // Reset previous winner styles
-    slots.forEach(slot => {
-      slot.classList.remove('winner');
-      slot.classList.add('spinning');
-    });
+    // Shaking animation
+    shakeInterval = setInterval(() => {
+      balls.forEach(ball => {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.random() * 110;
+        const centerX = 150 - 22.5;
+        const centerY = 150 - 22.5;
+        ball.style.left = `${centerX + Math.cos(angle) * radius}px`;
+        ball.style.top = `${centerY + Math.sin(angle) * radius}px`;
+      });
+    }, 150);
 
-    // Animate each slot stopping one by one
-    for (let i = 0; i < slots.length; i++) {
-      const slot = slots[i];
+    // Animate drawing balls
+    for (let i = 0; i < winners.length; i++) {
       const targetNumber = winners[i];
-      const slotNumSpan = slot.querySelector('.slot-number');
       
-      // Visual spinning effect by rapidly changing inner text
-      let spinInterval = setInterval(() => {
-        slotNumSpan.textContent = generateRandomNumber();
-      }, 50);
-
-      // Wait a bit before stopping this slot
-      // 1st slot stops after 1s, 2nd after 2s, etc. (staggered)
-      const stopTime = 1000 + (i * 1000); 
+      await new Promise(resolve => setTimeout(resolve, 1200)); 
       
-      await new Promise(resolve => setTimeout(resolve, stopTime));
-      
-      clearInterval(spinInterval);
-      slot.classList.remove('spinning');
-      slotNumSpan.textContent = targetNumber;
-      slot.classList.add('winner');
+      const targetBall = balls.find(b => b.textContent == targetNumber);
+      if (targetBall) {
+        balls = balls.filter(b => b !== targetBall);
+        ballTray.appendChild(targetBall);
+      }
     }
 
+    clearInterval(shakeInterval);
     isSpinning = false;
     startBtn.disabled = false;
   });
