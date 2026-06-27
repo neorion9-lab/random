@@ -137,6 +137,19 @@
       </div>
     </main>
 
+    <!-- 🌐 웹앱 하단 푸터 (Footer) -->
+    <footer class="app-footer">
+      <p class="footer-copyright">© 2026 두근두근 발표뽑기. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="#" id="footer-terms-btn" class="footer-link-btn">이용약관</a>
+        <span class="divider">|</span>
+        <a href="#" id="footer-privacy-btn" class="footer-link-btn">개인정보처리방침</a>
+      </p>
+      <p class="footer-responsibility">
+        개인정보책임자: 교사 이o실 (서울개원초등학교) | 문의: 02-2138-1940
+      </p>
+    </footer>
+
     <!-- 비밀 모달창 (선생님 전용 설정창) -->
     <div id="secret-modal" class="modal-overlay hidden">
       <div class="modal-content">
@@ -169,6 +182,22 @@
         </div>
         <div class="modal-footer">
           <button id="save-settings-btn" class="save-btn">저장 및 닫기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📜 이용약관 / 개인정보처리방침 팝업 모달창 -->
+    <div id="policy-modal" class="modal-overlay hidden">
+      <div class="modal-content policy-modal-content">
+        <div class="modal-header">
+          <h2 id="policy-modal-title">이용약관</h2>
+          <button id="close-policy-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body policy-modal-body" id="policy-modal-body">
+          <!-- JS를 통해 이용약관 또는 개인정보처리방침 HTML이 동적으로 주입됨 -->
+        </div>
+        <div class="modal-footer">
+          <button id="confirm-policy-btn" class="save-btn">확인</button>
         </div>
       </div>
     </div>

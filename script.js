@@ -57,6 +57,138 @@ document.addEventListener('DOMContentLoaded', () => {
   const totalStudentsInput = document.getElementById('total-students');
   const secretSequenceInput = document.getElementById('secret-sequence');
 
+  // Policy Modal Elements
+  const policyModal = document.getElementById('policy-modal');
+  const policyModalTitle = document.getElementById('policy-modal-title');
+  const policyModalBody = document.getElementById('policy-modal-body');
+  const closePolicyBtn = document.getElementById('close-policy-btn');
+  const confirmPolicyBtn = document.getElementById('confirm-policy-btn');
+  
+  const footerTermsBtn = document.getElementById('footer-terms-btn');
+  const footerPrivacyBtn = document.getElementById('footer-privacy-btn');
+
+  // 📝 HTML content for terms and privacy policy (based on MD file)
+  const termsHTML = `
+    <h1>두근두근 발표뽑기 서비스 이용약관</h1>
+    <p>본 이용약관은 '두근두근 발표뽑기'가 제공하는 교육용 웹 애플리케이션 서비스의 이용에 관한 사항을 규정합니다.</p>
+    
+    <h2>제1조 (목적)</h2>
+    <p>이 약관은 본 서비스가 제공하는 무료 교육용 웹 애플리케이션 서비스(이하 '서비스')를 이용함에 있어 서비스 제공자와 이용자의 권리의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+    
+    <h2>제2조 (정의)</h2>
+    <ol>
+      <li>'서비스'란 '두근두근 발표뽑기' 플랫폼에서 제공하는 교육용 발표 학생 추첨 웹 애플리케이션을 말합니다.</li>
+      <li>'이용자'란 본 서비스에 접속하여 이 약관에 따라 서비스를 이용하는 교사, 학생 및 비회원을 말합니다.</li>
+    </ol>
+    
+    <h2>제3조 (약관의 명시와 개정)</h2>
+    <ol>
+      <li>본 서비스는 이 약관의 내용을 이용자가 쉽게 알 수 있도록 서비스 초기 화면에 게시합니다.</li>
+      <li>관련 법령을 위배하지 않는 범위에서 이 약관을 개정할 수 있습니다.</li>
+    </ol>
+    
+    <h2>제4조 (서비스의 제공)</h2>
+    <ol>
+      <li>본 서비스는 교육 목적의 무료 웹 애플리케이션을 제공합니다.</li>
+      <li>서비스의 이용은 완전 무료이며, 별도의 가입이나 유료 결제가 필요하지 않습니다.</li>
+    </ol>
+    
+    <h2>제5조 (서비스의 중단)</h2>
+    <p>본 서비스는 시스템 점검, 소스 코드 패치, 호스팅 서버 점검 및 고장 등의 사유가 발생한 경우에는 서비스의 제공을 일시적으로 중단할 수 있습니다. 무료 서비스이므로 별도의 보상은 제공되지 않습니다.</p>
+    
+    <h2>제6조 (이용자의 의무 및 AI 윤리 의무)</h2>
+    <ol>
+      <li>이용자는 서비스를 이용할 때 본 서비스가 안내하는 <strong>'AI 윤리 핵심가이드'</strong>를 준수하고 실천해야 합니다.</li>
+      <li>이용자는 본 서비스 내에 타인의 명예를 훼손하거나 유해한 정보, 혹은 공서양속에 반하는 데이터를 입력하여서는 안 됩니다.</li>
+    </ol>
+    
+    <h2>제7조 (저작권)</h2>
+    <p>본 서비스가 작성한 저작물에 대한 저작권 및 기타 지식재산권은 원 서비스 개발자에게 귀속합니다.</p>
+    
+    <h2>제8조 (면책조항)</h2>
+    <p>본 서비스는 무료 교육용 도구로서 기기 환경에 따라 동작에 차이가 있을 수 있으며, 이로 발생하는 오류 및 기술적 문제에 대해 책임지지 않습니다.</p>
+  `;
+
+  const privacyHTML = `
+    <h1>두근두근 발표뽑기 개인정보처리방침</h1>
+    <p>본 서비스는 개인정보 보호법 제30조에 따라 정보주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리방침을 수립·공개합니다.</p>
+    
+    <h2>제1조 (개인정보의 처리 목적)</h2>
+    <p>본 서비스는 회원가입 제도가 없으며, <strong>서버로 개인정보를 절대 전송하거나 수집하지 않습니다.</strong> 입력되는 정보는 로컬 렌더링 목적으로만 사용됩니다.</p>
+    
+    <h2>제2조 (개인정보의 처리 및 보유기간)</h2>
+    <p>이용자가 입력한 학생 목록 등 모든 데이터는 이용자의 로컬 웹 브라우저 내부 저장소(<code>localStorage</code>)에만 안전하게 저장됩니다.</p>
+    <ul>
+      <li>보유 기간: 웹 브라우저의 캐시/사이트 데이터를 삭제할 때까지 보관됩니다.</li>
+    </ul>
+    
+    <h2>제3조 (처리하는 개인정보 항목)</h2>
+    <ul>
+      <li>로컬 저장 및 처리 항목: 설정된 총 학생 수, 학생 이름 목록, 입력된 번호, 뽑기 진행 기록</li>
+      <li>수집하지 않는 항목: 이름, 주소, 전화번호, 이메일 등 일체의 민감 개인정보</li>
+    </ul>
+    
+    <h2>제4조 (만 14세 미만 아동의 개인정보 처리)</h2>
+    <p>본 서비스는 아동의 개인정보를 수집 및 보유하지 않으며 학급 활동 시 사용되는 학생 명단은 기기 내에서 로컬로 임시 저장되므로, 법정대리인의 별도 가입 동의를 거치지 않습니다.</p>
+    
+    <h2>제5조 (개인정보의 파기 절차 및 방법)</h2>
+    <p>이용자가 입력한 데이터는 브라우저 설정에서 쿠키 및 사이트 데이터를 초기화하거나, '선생님 설정 모드' 내에서 수동으로 목록을 삭제하면 즉시 브라우저에서 영구 파기됩니다.</p>
+    
+    <h2>제6조 (개인정보의 안전성 확보조치)</h2>
+    <ol>
+      <li><strong>서버 없는 설계(Zero-Server)</strong>: 외부 데이터베이스에 회원 데이터를 저장하지 않으므로 해킹 및 외부 유출 위험이 원천 차단됩니다.</li>
+      <li><strong>보안 전송(HTTPS)</strong>: 데이터 전송 구간 암호화를 통해 안전하게 소스 코드를 로딩합니다.</li>
+    </ol>
+    
+    <h2>제7조 (정보주체와 법정대리인의 권리)</h2>
+    <p>교사는 언제든지 '선생님 설정 모드'를 통해 해당 학생의 정보를 수정하거나 삭제해 줄 수 있습니다.</p>
+    
+    <h2>제8조 (개인정보 보호책임자)</h2>
+    <ul>
+      <li><strong>개발 및 책임자</strong>: 이o실</li>
+      <li><strong>소속</strong>: 서울개원초등학교</li>
+      <li><strong>직위</strong>: 교사</li>
+      <li><strong>문의 연락처</strong>: 02-2138-1940 (교무실)</li>
+    </ul>
+    
+    <h2>제9조 (변경 안내)</h2>
+    <p>본 개인정보 처리방침은 <strong>2026년 6월 27일</strong>부터 적용됩니다.</p>
+  `;
+
+  // Open Policy Popup Modal
+  function openPolicyModal(title, htmlContent) {
+    policyModalTitle.textContent = title;
+    policyModalBody.innerHTML = htmlContent;
+    policyModal.classList.remove('hidden');
+  }
+
+  function closePolicyModal() {
+    policyModal.classList.add('hidden');
+  }
+
+  // Event Listeners for Footer Buttons
+  footerTermsBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openPolicyModal('서비스 이용약관 📜', termsHTML);
+  });
+
+  footerPrivacyBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openPolicyModal('개인정보처리방침 🛡️', privacyHTML);
+  });
+
+  // Close Event Listeners
+  closePolicyBtn.addEventListener('click', closePolicyModal);
+  confirmPolicyBtn.addEventListener('click', closePolicyModal);
+
+  // Close modal when clicking outside content
+  policyModal.addEventListener('click', (e) => {
+    if (e.target === policyModal) {
+      closePolicyModal();
+    }
+  });
+
+
   // Student Name Inputs
   const newStudentNumInput = document.getElementById('new-student-num');
   const newStudentNameInput = document.getElementById('new-student-name');

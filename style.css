@@ -630,3 +630,113 @@ header h1 {
 .settings-btn:hover {
   transform: rotate(90deg);
 }
+
+/* ============================
+   🌐 WEB APP FOOTER STYLES
+   ============================ */
+.app-footer {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 2px dashed #e0e0e0;
+  font-family: 'Jua', sans-serif;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.footer-copyright {
+  margin-bottom: 6px;
+  color: #666;
+}
+
+.footer-links {
+  margin-bottom: 8px;
+}
+
+.footer-link-btn {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+  margin: 0 8px;
+  transition: color 0.2s;
+}
+
+.footer-link-btn:hover {
+  color: #d94b4b;
+  text-decoration: underline;
+}
+
+.footer-links .divider {
+  color: #ccc;
+}
+
+.footer-responsibility {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+/* ============================
+   📜 POLICY POPUP MODAL STYLES
+   ============================ */
+.policy-modal-content {
+  max-width: 600px;
+  width: 92%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.policy-modal-body {
+  overflow-y: auto;
+  text-align: left;
+  padding: 15px;
+  font-family: 'Nanum Gothic', 'Malgun Gothic', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #444;
+}
+
+.policy-modal-body h1, .policy-modal-body h2 {
+  font-family: 'Jua', sans-serif;
+  color: var(--text-color);
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.policy-modal-body h1 {
+  font-size: 1.4rem;
+  border-bottom: 2px solid var(--secondary-color);
+  padding-bottom: 6px;
+}
+
+.policy-modal-body h2 {
+  font-size: 1.2rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 4px;
+}
+
+.policy-modal-body h3 {
+  font-family: 'Jua', sans-serif;
+  font-size: 1rem;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  color: #2c3e50;
+}
+
+.policy-modal-body p {
+  margin-bottom: 10px;
+}
+
+.policy-modal-body ul, .policy-modal-body ol {
+  margin-bottom: 12px;
+  padding-left: 20px;
+}
+
+.policy-modal-body li {
+  margin-bottom: 4px;
+  list-style-type: decimal;
+}
+
+.policy-modal-body ul li {
+  list-style-type: disc;
+}
+
