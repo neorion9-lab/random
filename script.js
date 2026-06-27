@@ -1,4 +1,46 @@
+// ============================
+// 🔐 ETHICS GATE LOGIC
+// ============================
+(function () {
+  const STORAGE_KEY = 'ethics_agreed_v1';
+  const gate = document.getElementById('ethics-gate');
+  const agreeBtn = document.getElementById('ethics-agree-btn');
+  const scrollArea = document.getElementById('ethics-scroll-area');
+  const scrollHint = document.getElementById('scroll-hint');
+
+  // 이미 동의한 경우 → 바로 게이트 숨김
+  if (localStorage.getItem(STORAGE_KEY) === 'true') {
+    gate.classList.add('hidden');
+    return;
+  }
+
+  // 스크롤 감지 → 끝까지 내려야 버튼 활성화
+  function checkScroll() {
+    const threshold = 30; // px 여유
+    const isAtBottom = scrollArea.scrollTop + scrollArea.clientHeight >= scrollArea.scrollHeight - threshold;
+    if (isAtBottom) {
+      agreeBtn.disabled = false;
+      scrollHint.classList.add('hidden');
+      scrollArea.removeEventListener('scroll', checkScroll);
+    }
+  }
+
+  scrollArea.addEventListener('scroll', checkScroll);
+  // 혹시 내용이 짧아서 스크롤이 필요 없을 때 즉시 체크
+  setTimeout(checkScroll, 300);
+
+  // 동의 버튼 클릭 → localStorage 저장 + 페이드아웃
+  agreeBtn.addEventListener('click', () => {
+    localStorage.setItem(STORAGE_KEY, 'true');
+    gate.classList.add('fade-out');
+    setTimeout(() => {
+      gate.classList.add('hidden');
+    }, 650);
+  });
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
+
   // DOM Elements
   const appTitle = document.getElementById('app-title');
   const settingsBtn = document.getElementById('settings-btn');
